@@ -1,6 +1,8 @@
 import { Request, Response, query } from "express";
 import { client } from "./database";
-import { QueryConfig } from "pg";
+import { QueryConfig, QueryResult } from "pg";
+import { IMovie, IMovieRequest } from "./interfaces";
+import format from "pg-format";
 
 
 const getAllMovies = async(req: Request, res: Response): Promise<Response> => {
@@ -12,6 +14,8 @@ const getAllMovies = async(req: Request, res: Response): Promise<Response> => {
         values: []
     }
     
+    var queryResult: any | QueryResult = ''
+
     if(req.query.category){
         queryString = `
         SELECT
@@ -26,6 +30,9 @@ const getAllMovies = async(req: Request, res: Response): Promise<Response> => {
             text: queryString,
             values: [req.query.category]
         }
+
+        queryResult = await client.query(queryConfig)
+
     }else{
         queryString = `
             SELECT
@@ -33,10 +40,10 @@ const getAllMovies = async(req: Request, res: Response): Promise<Response> => {
             FROM
                 movies;    
         `
+        queryResult = await client.query(queryString)
     }
 
-    const queryResult = await client.query(queryConfig)
-
+    
     return res.json(queryResult.rows)
 }
 
@@ -61,8 +68,26 @@ const getMovieById = async (req: Request, res: Response): Promise<Response> => {
     return res.json(queryResult.rows[0])
 }
 
+const postMovie = async (req: Request, res: Response): Promise<Response> => {
+
+    const movieData: IMovieRequest = req.body
+
+    const queryString: string = format(`
+        INSERT INTO
+            movies(%I)
+        VALUES(%L)
+        RETURNING *;
+    `,
+        Object.keys(movieData),
+        Object.values(movieData)
+    )
+
+    return res.status(201).json((await client.query(queryString)).rows[0])
+}
+
 
 export {
     getAllMovies,
-    getMovieById
+    getMovieById,
+    postMovie
 }

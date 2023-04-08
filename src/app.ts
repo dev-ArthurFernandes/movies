@@ -2,10 +2,11 @@ import express, { Application, json } from 'express';
 import { startDataBase } from './database';
 import {
     getAllMovies,
-    getMovieById
+    getMovieById,
+    postMovie
 } from './logic';
 import {
-    validateId
+    validateId, validateName
 } from './middlewares'
 
 
@@ -18,7 +19,7 @@ App.use(json())
 App.get(`${baseURL}`, getAllMovies)
 App.get(`${baseURL}/:id`, validateId, getMovieById)
 
-App.post(`${baseURL}`)
+App.post(`${baseURL}`, validateName, postMovie)
 
 App.patch(`${baseURL}/:id`, validateId)
 
