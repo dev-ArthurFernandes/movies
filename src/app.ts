@@ -3,10 +3,12 @@ import { startDataBase } from './database';
 import {
     getAllMovies,
     getMovieById,
-    postMovie
+    postMovie,
+    patchMovie
 } from './logic';
 import {
-    validateId, validateName
+    validateId,
+    validateName
 } from './middlewares'
 
 
@@ -21,7 +23,7 @@ App.get(`${baseURL}/:id`, validateId, getMovieById)
 
 App.post(`${baseURL}`, validateName, postMovie)
 
-App.patch(`${baseURL}/:id`, validateId)
+App.patch(`${baseURL}/:id`, validateId, validateName, patchMovie)
 
 App.delete(`${baseURL}/:id`, validateId)
 
