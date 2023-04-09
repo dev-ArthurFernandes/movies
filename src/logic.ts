@@ -85,9 +85,38 @@ const postMovie = async (req: Request, res: Response): Promise<Response> => {
     return res.status(201).json((await client.query(queryString)).rows[0])
 }
 
+const patchMovie = async (req: Request, res: Response): Promise<Response> => {
+
+    const movieData: IMovieRequest = req.body
+
+    const movieId: number = parseInt(req.params.id)
+
+    const queryString: string = format(`
+        UPDATE
+            movie
+        SET(%I) = ROW(%L)
+        WHERE
+            id = $1
+        RETURNING *;
+    `,
+        Object.keys(movieData),
+        Object.values(movieData)
+    )
+
+    const queryConfig: QueryConfig = {
+        text: queryString,
+        values: [movieId]
+    }
+
+    const queryResult: QueryResult = await client.query(queryConfig)
+
+    return res.json(queryResult.rows[0])
+
+}
 
 export {
     getAllMovies,
     getMovieById,
-    postMovie
+    postMovie,
+    patchMovie
 }

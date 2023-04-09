@@ -1,8 +1,8 @@
 interface IMovieRequest{
-    name: string,
-    category: string
-    duration: number,
-    price: number
+    name?: string,
+    category?: string
+    duration?: number,
+    price?: number
 }
 
 
