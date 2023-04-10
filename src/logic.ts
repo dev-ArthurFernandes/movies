@@ -93,7 +93,7 @@ const patchMovie = async (req: Request, res: Response): Promise<Response> => {
 
     const queryString: string = format(`
         UPDATE
-            movie
+            movies
         SET(%I) = ROW(%L)
         WHERE
             id = $1
@@ -114,9 +114,31 @@ const patchMovie = async (req: Request, res: Response): Promise<Response> => {
 
 }
 
+const deleteMovie = async (req: Request, res: Response): Promise<Response> => {
+
+    const movieID: number = parseInt(req.params.id)
+
+    const queryString: string = `
+        DELETE FROM
+            movies
+        WHERE
+            id = $1;    
+    `
+
+    const queryConfing: QueryConfig = {
+        text: queryString,
+        values: [movieID]
+    }
+
+    await client.query(queryConfing)
+
+    return res.status(204).send()
+}
+
 export {
     getAllMovies,
     getMovieById,
     postMovie,
-    patchMovie
+    patchMovie,
+    deleteMovie
 }

@@ -4,7 +4,8 @@ import {
     getAllMovies,
     getMovieById,
     postMovie,
-    patchMovie
+    patchMovie,
+    deleteMovie
 } from './logic';
 import {
     validateId,
@@ -25,7 +26,7 @@ App.post(`${baseURL}`, validateName, postMovie)
 
 App.patch(`${baseURL}/:id`, validateId, validateName, patchMovie)
 
-App.delete(`${baseURL}/:id`, validateId)
+App.delete(`${baseURL}/:id`, validateId, deleteMovie)
 
 
 App.listen(3000, async () => {
